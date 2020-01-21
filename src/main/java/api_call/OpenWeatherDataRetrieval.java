@@ -32,7 +32,24 @@ public class OpenWeatherDataRetrieval {
     private static String UNITS = "metric";
     private static String APPID = "0154ac07e7c0fc3b2556cc8e5da8ad48";
     
-    public OpenWeatherResponse getWeatherForecast(String city, String countrycode){
+    public OpenWeatherResponse getWeatherForecastByCity(String city){
+        Client c = ClientBuilder.newClient();
+        Response r = c.target(URI)
+                .path(PATH)
+                .queryParam("appid", APPID)
+                .queryParam(UNITS)
+                .queryParam("q", city)
+                .request(MediaType.APPLICATION_JSON)
+                .get();
+
+        String jsonString = r.readEntity(String.class);
+        Gson gson = new Gson();
+        OpenWeatherResponse response = gson.fromJson(jsonString, OpenWeatherResponse.class);
+        
+        return response;
+    }
+    
+    public OpenWeatherResponse getWeatherForecastByCityAndCountry(String city, String countrycode){
         Client c = ClientBuilder.newClient();
         Response r = c.target(URI)
                 .path(PATH)
