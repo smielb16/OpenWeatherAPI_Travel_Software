@@ -2,7 +2,7 @@ package api_response;
 
 import java.util.ArrayList;
 
-public class OpenWeatherResponse {
+public class OpenWeatherData {
 
     public Coord getCoord() {
         return coord;

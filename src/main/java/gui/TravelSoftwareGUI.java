@@ -5,33 +5,28 @@
  */
 package gui;
 
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import api_call.OpenWeatherCall;
+import api_response.OpenWeatherData;
+import bl.TravelSoftwareTableModel;
 
 /**
  *
  * @author elisc
  */
-public class MainGUI extends javax.swing.JFrame {
+public class TravelSoftwareGUI extends javax.swing.JFrame {
+
+    private TravelSoftwareTableModel model = new TravelSoftwareTableModel();
+    private TravelSoftwareTableCellRenderer renderer = new TravelSoftwareTableCellRenderer();
 
     /**
      * Creates new form MainGUI
      */
-    public MainGUI() {
+    public TravelSoftwareGUI() {
         initComponents();
-        try {
-            // Set System L&F
-            UIManager.setLookAndFeel(
-                    UIManager.getSystemLookAndFeelClassName());
-        } catch (UnsupportedLookAndFeelException e) {
-            // handle exception
-        } catch (ClassNotFoundException e) {
-            // handle exception
-        } catch (InstantiationException e) {
-            // handle exception
-        } catch (IllegalAccessException e) {
-            // handle exception
-        }
+
+        tbDestination.setModel(model);
+        tbDestination.setDefaultRenderer(Object.class, renderer);
+        tbDestination.setRowHeight(30);
     }
 
     /**
@@ -47,16 +42,16 @@ public class MainGUI extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         txCity = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        txCountry = new javax.swing.JTextField();
+        cbCountry = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
-        txDate = new javax.swing.JTextField();
+        cbDate = new javax.swing.JComboBox<>();
         lbLogo = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tbDestination = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        btAddDestination = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
+        btRemoveDestination = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -72,19 +67,21 @@ public class MainGUI extends javax.swing.JFrame {
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Country (refer to ISO 3166)");
         jPanel3.add(jLabel3);
-        jPanel3.add(txCountry);
+
+        jPanel3.add(cbCountry);
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Day of Departure");
         jPanel3.add(jLabel2);
-        jPanel3.add(txDate);
+
+        jPanel3.add(cbDate);
 
         lbLogo.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         lbLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbLogo.setText("Weather Report");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tbDestination.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -95,18 +92,23 @@ public class MainGUI extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tbDestination);
 
         jPanel1.setLayout(new java.awt.GridLayout(3, 0));
 
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
-        jButton1.setText("Add Destination");
-        jPanel1.add(jButton1);
+        btAddDestination.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        btAddDestination.setText("Add Destination");
+        btAddDestination.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btAddDestinationActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btAddDestination);
         jPanel1.add(jLabel4);
 
-        jButton2.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
-        jButton2.setText("Remove Destination");
-        jPanel1.add(jButton2);
+        btRemoveDestination.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        btRemoveDestination.setText("Remove Destination");
+        jPanel1.add(btRemoveDestination);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -140,6 +142,22 @@ public class MainGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btAddDestinationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddDestinationActionPerformed
+        OpenWeatherCall call = new OpenWeatherCall();
+        String city = txCity.getText();
+        String country = (String) cbCountry.getSelectedItem();
+        OpenWeatherData weather;
+
+        /*if(!country.equals("")){
+            weather = call.getWeatherForecastByCityAndCountry(city, country);
+        }
+        else{
+            weather = call.getWeatherForecastByCity(city);
+        }*/
+        weather = call.getWeatherForecastByCity(city);
+        model.add(weather);
+    }//GEN-LAST:event_btAddDestinationActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -154,30 +172,38 @@ public class MainGUI extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TravelSoftwareGUI.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TravelSoftwareGUI.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TravelSoftwareGUI.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TravelSoftwareGUI.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainGUI().setVisible(true);
+                new TravelSoftwareGUI().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btAddDestination;
+    private javax.swing.JButton btRemoveDestination;
+    private javax.swing.JComboBox<String> cbCountry;
+    private javax.swing.JComboBox<String> cbDate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -185,10 +211,8 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lbLogo;
+    private javax.swing.JTable tbDestination;
     private javax.swing.JTextField txCity;
-    private javax.swing.JTextField txCountry;
-    private javax.swing.JTextField txDate;
     // End of variables declaration//GEN-END:variables
 }

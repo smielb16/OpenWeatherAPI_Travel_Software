@@ -9,7 +9,7 @@ package api_response;
  *
  * @author elisc
  */
-class Main {
+public class Main {
     private double temp;
     private double feels_like;
     private double temp_min;
