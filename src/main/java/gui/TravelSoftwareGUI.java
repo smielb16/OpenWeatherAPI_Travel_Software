@@ -24,6 +24,7 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
     public TravelSoftwareGUI() {
         initComponents();
 
+        model.load();
         tbDestination.setModel(model);
         tbDestination.setDefaultRenderer(Object.class, renderer);
         tbDestination.setRowHeight(30);
