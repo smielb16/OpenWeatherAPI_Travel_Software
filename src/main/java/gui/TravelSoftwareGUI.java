@@ -108,6 +108,11 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
 
         btRemoveDestination.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         btRemoveDestination.setText("Remove Destination");
+        btRemoveDestination.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btRemoveDestinationActionPerformed(evt);
+            }
+        });
         jPanel1.add(btRemoveDestination);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -157,6 +162,11 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
         weather = call.getWeatherForecastByCity(city);
         model.add(weather);
     }//GEN-LAST:event_btAddDestinationActionPerformed
+
+    private void btRemoveDestinationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveDestinationActionPerformed
+        int[] indices = tbDestination.getSelectedRows();
+        model.remove(indices);
+    }//GEN-LAST:event_btRemoveDestinationActionPerformed
 
     /**
      * @param args the command line arguments
