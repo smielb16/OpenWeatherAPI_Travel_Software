@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package api_response;
+package api_current_weather;
 
 /**
  *
  * @author elisc
  */
-class Coord {
+public class Coord {
     
     private double lon;
     private double lat;

@@ -1,8 +1,8 @@
-package api_response;
+package api_current_weather;
 
 import java.util.ArrayList;
 
-public class OpenWeatherData {
+public class CurrentWeather {
 
     public Coord getCoord() {
         return coord;

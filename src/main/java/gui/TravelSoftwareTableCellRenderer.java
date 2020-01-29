@@ -6,7 +6,8 @@
 package gui;
 
 import api_call.OpenWeatherCall;
-import api_response.OpenWeatherData;
+import api_current_weather.CurrentWeather;
+import bl.CountryCodes;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
@@ -28,16 +29,18 @@ public class TravelSoftwareTableCellRenderer implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         JLabel label = new JLabel();
-        OpenWeatherData weather = (OpenWeatherData) value;
+        CurrentWeather weather = (CurrentWeather) value;
         
         switch (table.convertColumnIndexToModel(column)) {
             case 0:
-                Image img = new OpenWeatherCall()
+                Image img = OpenWeatherCall.getInstance()
                         .getWeatherIcon(weather.getWeather().get(0).getIcon());
                 label.setIcon(getScaledImageIcon(img, 35, 35));
                 break;
             case 1:
-                label.setText(weather.getName());
+                label.setText(weather.getName() + ", "
+                        + CountryCodes.getInstance()
+                                .getValue(weather.getSys().getCountry()));
                 break;
             case 2:
                 label.setText(String

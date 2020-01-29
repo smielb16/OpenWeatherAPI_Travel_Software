@@ -6,8 +6,16 @@
 package gui;
 
 import api_call.OpenWeatherCall;
-import api_response.OpenWeatherData;
+import api_current_weather.CurrentWeather;
+import api_forecast.WeatherForecast;
+import bl.CountryCodes;
+import bl.DTF;
+import bl.ForecastParser;
 import bl.TravelSoftwareTableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.util.ArrayList;
 
 /**
  *
@@ -15,14 +23,26 @@ import bl.TravelSoftwareTableModel;
  */
 public class TravelSoftwareGUI extends javax.swing.JFrame {
 
-    private TravelSoftwareTableModel model = new TravelSoftwareTableModel();
-    private TravelSoftwareTableCellRenderer renderer = new TravelSoftwareTableCellRenderer();
+    private TravelSoftwareTableModel model;
+    private TravelSoftwareTableCellRenderer renderer;
 
     /**
      * Creates new form MainGUI
      */
     public TravelSoftwareGUI() {
         initComponents();
+
+        model = new TravelSoftwareTableModel();
+        renderer = new TravelSoftwareTableCellRenderer();
+
+        cbDate.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                changeForecastModel();
+            }
+        });
+
+        fillDateCb();
+        fillCountryCb();
 
         model.load();
         tbDestination.setModel(model);
@@ -69,6 +89,11 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
         jLabel3.setText("Country (refer to ISO 3166)");
         jPanel3.add(jLabel3);
 
+        cbCountry.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbCountryActionPerformed(evt);
+            }
+        });
         jPanel3.add(cbCountry);
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
@@ -121,13 +146,13 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE))
+                .addComponent(lbLogo, javax.swing.GroupLayout.DEFAULT_SIZE, 548, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 508, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -149,25 +174,65 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btAddDestinationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddDestinationActionPerformed
-        OpenWeatherCall call = new OpenWeatherCall();
         String city = txCity.getText();
-        String country = (String) cbCountry.getSelectedItem();
-        OpenWeatherData weather;
+        String country = CountryCodes.getInstance()
+                .getValue((String) cbCountry.getSelectedItem());
 
-        /*if(!country.equals("")){
-            weather = call.getWeatherForecastByCityAndCountry(city, country);
-        }
-        else{
-            weather = call.getWeatherForecastByCity(city);
-        }*/
-        weather = call.getWeatherForecastByCity(city);
-        model.add(weather);
+        addData(city, country);
     }//GEN-LAST:event_btAddDestinationActionPerformed
 
     private void btRemoveDestinationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveDestinationActionPerformed
         int[] indices = tbDestination.getSelectedRows();
         model.remove(indices);
     }//GEN-LAST:event_btRemoveDestinationActionPerformed
+
+    private void cbCountryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbCountryActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbCountryActionPerformed
+
+    private void fillDateCb() {
+        LocalDate date = LocalDate.now();
+
+        for (int i = 0; i < 5; i++) {
+            String dateStr = date.plusDays((long) i).format(DTF.STANDARD_DATE.value());
+            cbDate.addItem(dateStr);
+        }
+    }
+
+    private void fillCountryCb() {
+        for (String key : CountryCodes.getInstance().getCountries()) {
+            cbCountry.addItem(key);
+        }
+    }
+
+    private void changeForecastModel() {
+        ArrayList<CurrentWeather> data = new ArrayList<>();
+        data.addAll(model.getWeatherData());
+        model.clearTable();
+
+        for (CurrentWeather currentWeather : data) {
+            addData(currentWeather.getName(),
+                    currentWeather.getSys().getCountry());
+        }
+    }
+
+    private void addData(String city, String country) {
+        CurrentWeather weather = null;
+
+        LocalDate selectedDate = LocalDate
+                .parse((String) cbDate.getSelectedItem(),
+                        DTF.STANDARD_DATE.value());
+
+        if (selectedDate.equals(LocalDate.now())) {
+            weather = OpenWeatherCall
+                    .getInstance().getCurrentWeatherByCityAndCountry(city, country);
+        } else {
+            WeatherForecast forecast = OpenWeatherCall.getInstance().getForecastByCityAndCountry(city, country);
+            weather = new ForecastParser().parseForecastToCurrentWeather(forecast, selectedDate);
+        }
+
+        model.add(weather);
+    }
 
     /**
      * @param args the command line arguments

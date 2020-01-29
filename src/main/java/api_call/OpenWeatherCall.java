@@ -5,7 +5,8 @@
  */
 package api_call;
 
-import api_response.OpenWeatherData;
+import api_current_weather.CurrentWeather;
+import api_forecast.WeatherForecast;
 import com.google.gson.Gson;
 import java.awt.Image;
 import java.io.IOException;
@@ -14,7 +15,6 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
@@ -27,33 +27,28 @@ import javax.ws.rs.core.Response;
 public class OpenWeatherCall {
 
     private static String URI = "http://api.openweathermap.org/data/2.5/";
-    private static String PATH = "weather";
+    private static String PATH_1 = "weather";
+    private static String PATH_2 = "forecast";
     private static String UNITS = "metric";
     private static String APPID = "0154ac07e7c0fc3b2556cc8e5da8ad48";
     private static String URI_ICON = "http://openweathermap.org/img/wn/";
     private static String ICON_END = "@2x.png";
+    private static OpenWeatherCall instance;
 
-    public OpenWeatherData getWeatherForecastByCity(String city) {
-        Client c = ClientBuilder.newClient();
-        Response r = c.target(URI)
-                .path(PATH)
-                .queryParam("appid", APPID)
-                .queryParam(UNITS)
-                .queryParam("q", city)
-                .request(MediaType.APPLICATION_JSON)
-                .get();
-
-        String jsonString = r.readEntity(String.class);
-        Gson gson = new Gson();
-        OpenWeatherData response = gson.fromJson(jsonString, OpenWeatherData.class);
-
-        return response;
+    private OpenWeatherCall() {
     }
 
-    public OpenWeatherData getWeatherForecastByCityAndCountry(String city, String countrycode) {
+    public synchronized static OpenWeatherCall getInstance() {
+        if (instance == null) {
+            instance = new OpenWeatherCall();
+        }
+        return instance;
+    }
+
+    public CurrentWeather getCurrentWeatherByCityAndCountry(String city, String countrycode) {
         Client c = ClientBuilder.newClient();
         Response r = c.target(URI)
-                .path(PATH)
+                .path(PATH_1)
                 .queryParam("appid", APPID)
                 .queryParam(UNITS)
                 .queryParam("q", city + "," + countrycode)
@@ -62,7 +57,7 @@ public class OpenWeatherCall {
 
         String jsonString = r.readEntity(String.class);
         Gson gson = new Gson();
-        OpenWeatherData response = gson.fromJson(jsonString, OpenWeatherData.class);
+        CurrentWeather response = gson.fromJson(jsonString, CurrentWeather.class);
 
         return response;
     }
@@ -79,4 +74,22 @@ public class OpenWeatherCall {
         }
         return image;
     }
+
+    public WeatherForecast getForecastByCityAndCountry(String city, String countrycode) {
+        Client c = ClientBuilder.newClient();
+        Response r = c.target(URI)
+                .path(PATH_2)
+                .queryParam("appid", APPID)
+                .queryParam(UNITS)
+                .queryParam("q", city)
+                .request(MediaType.APPLICATION_JSON)
+                .get();
+
+        String jsonString = r.readEntity(String.class);
+        Gson gson = new Gson();
+        WeatherForecast response = gson.fromJson(jsonString, WeatherForecast.class);
+
+        return response;
+    }
+
 }

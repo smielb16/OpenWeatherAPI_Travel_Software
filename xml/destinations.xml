@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <destinations>
   <destination>
-    <name>Graz</name>
-    <country>AT</country>
+    <name>Warsaw</name>
+    <country>PL</country>
+  </destination>
+  <destination>
+    <name>Astana</name>
+    <country>KZ</country>
   </destination>
 </destinations>

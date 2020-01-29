@@ -5,7 +5,7 @@
  */
 package bl;
 
-import api_response.OpenWeatherData;
+import api_current_weather.CurrentWeather;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -49,9 +49,9 @@ public class DestinationXML {
         return instance;
     }
 
-    public void saveDestinations(ArrayList<OpenWeatherData> data) {
+    public void saveDestinations(ArrayList<CurrentWeather> data) {
         ArrayList<String> destinations = new ArrayList<>();
-        for (OpenWeatherData weather : data) {
+        for (CurrentWeather weather : data) {
             destinations.add(weather.getName() + "," + weather.getSys().getCountry());
         }
         

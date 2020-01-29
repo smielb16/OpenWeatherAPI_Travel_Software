@@ -6,7 +6,7 @@
 package bl;
 
 import api_call.OpenWeatherCall;
-import api_response.OpenWeatherData;
+import api_current_weather.CurrentWeather;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -20,10 +20,10 @@ import org.jdom2.JDOMException;
  */
 public class TravelSoftwareTableModel extends AbstractTableModel {
 
-    private ArrayList<OpenWeatherData> data = new ArrayList<>();
+    private ArrayList<CurrentWeather> data = new ArrayList<>();
     private String[] COLUMNS = {"Icon", "Destination", "Temp", "Min Temp", "Max Temp", "Humidity", "Pressure"};
 
-    public void add(OpenWeatherData weather) {
+    public void add(CurrentWeather weather) {
         data.add(weather);
         save();
         fireTableRowsInserted(data.size() - 1, data.size() - 1);
@@ -71,8 +71,10 @@ public class TravelSoftwareTableModel extends AbstractTableModel {
         try {
             ArrayList<String> destinations = DestinationXML.getInstance().loadDestinations();
             for (String destination : destinations) {
-                OpenWeatherCall call = new OpenWeatherCall();
-                data.add(call.getWeatherForecastByCity(destination));
+                String[] parts = destination.split(",");
+                String city = parts[0];
+                String country = parts[1];
+                data.add(OpenWeatherCall.getInstance().getCurrentWeatherByCityAndCountry(city, country));
                 fireTableRowsInserted(data.size() - 1, data.size() - 1);
             }
         } catch (JDOMException ex) {
@@ -80,6 +82,15 @@ public class TravelSoftwareTableModel extends AbstractTableModel {
         } catch (IOException ex) {
             Logger.getLogger(TravelSoftwareTableModel.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public ArrayList<CurrentWeather> getWeatherData(){
+        return data;
+    }
+    
+    public void clearTable(){
+        data.clear();
+        fireTableDataChanged();
     }
 
 }
