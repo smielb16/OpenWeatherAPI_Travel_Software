@@ -7,6 +7,7 @@ package bl;
 
 import api_call.OpenWeatherCall;
 import api_current_weather.CurrentWeather;
+import gui.CompareWeatherConditionsGUI;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -80,7 +81,7 @@ public class TravelSoftwareTableModel extends AbstractTableModel {
                 String[] parts = destination.split(",");
                 String city = parts[0];
                 String country = parts[1];
-                data.add(OpenWeatherCall.getInstance().getCurrentWeatherByCityAndCountry(city, country));
+                data.add(new OpenWeatherCall().getCurrentWeatherByCityAndCountry(city, country));
                 fireTableRowsInserted(data.size() - 1, data.size() - 1);
             }
         } catch (JDOMException ex) {
@@ -122,6 +123,18 @@ public class TravelSoftwareTableModel extends AbstractTableModel {
         }
 
         fireTableDataChanged();
+    }
+    
+    public void compareWeatherConditions(int[] indices) throws Exception{
+        if(indices.length != 2){
+            throw new Exception("Please select TWO destinations to compare weather conditions!");
+        }
+        
+        CurrentWeather[] conditions = new CurrentWeather[2];
+        conditions[0] = data.get(indices[0]);
+        conditions[1] = data.get(indices[1]);
+        
+        new CompareWeatherConditionsGUI().showConditions(conditions);
     }
 
 }

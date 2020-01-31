@@ -33,16 +33,9 @@ public class OpenWeatherCall {
     private static String APPID = "0154ac07e7c0fc3b2556cc8e5da8ad48";
     private static String URI_ICON = "http://openweathermap.org/img/wn/";
     private static String ICON_END = "@2x.png";
-    private static OpenWeatherCall instance;
 
-    private OpenWeatherCall() {
-    }
-
-    public synchronized static OpenWeatherCall getInstance() {
-        if (instance == null) {
-            instance = new OpenWeatherCall();
-        }
-        return instance;
+    public OpenWeatherCall() {
+        
     }
 
     public CurrentWeather getCurrentWeatherByCityAndCountry(String city, String countrycode) {
@@ -50,7 +43,7 @@ public class OpenWeatherCall {
         Response r = c.target(URI)
                 .path(PATH_1)
                 .queryParam("appid", APPID)
-                .queryParam(UNITS)
+                .queryParam("units", UNITS)
                 .queryParam("q", city + "," + countrycode)
                 .request(MediaType.APPLICATION_JSON)
                 .get();

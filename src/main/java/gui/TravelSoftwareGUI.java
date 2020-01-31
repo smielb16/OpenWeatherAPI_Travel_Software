@@ -18,6 +18,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.JTableHeader;
 
 /**
@@ -58,20 +61,20 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
         tbDestination = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         btAddDestination = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
         btRemoveDestination = new javax.swing.JButton();
+        btCompareDestinations = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel3.setLayout(new java.awt.GridLayout(3, 2));
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("City");
         jPanel3.add(jLabel1);
         jPanel3.add(txCity);
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Country (refer to ISO 3166)");
         jPanel3.add(jLabel3);
@@ -83,7 +86,7 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
         });
         jPanel3.add(cbCountry);
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Day of Departure");
         jPanel3.add(jLabel2);
@@ -109,7 +112,7 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
 
         jPanel1.setLayout(new java.awt.GridLayout(3, 0));
 
-        btAddDestination.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        btAddDestination.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         btAddDestination.setText("Add Destination");
         btAddDestination.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -117,9 +120,8 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
             }
         });
         jPanel1.add(btAddDestination);
-        jPanel1.add(jLabel4);
 
-        btRemoveDestination.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        btRemoveDestination.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         btRemoveDestination.setText("Remove Destination");
         btRemoveDestination.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -127,6 +129,15 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
             }
         });
         jPanel1.add(btRemoveDestination);
+
+        btCompareDestinations.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        btCompareDestinations.setText("Compare Destinations");
+        btCompareDestinations.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btCompareDestinationsActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btCompareDestinations);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -177,6 +188,14 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cbCountryActionPerformed
 
+    private void btCompareDestinationsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCompareDestinationsActionPerformed
+        try {
+            model.compareWeatherConditions(tbDestination.getSelectedRows());
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+    }//GEN-LAST:event_btCompareDestinationsActionPerformed
+
     private void fillDateCb() {
         LocalDate date = LocalDate.now();
 
@@ -205,16 +224,16 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
 
     private void addData(String city, String country) {
         CurrentWeather weather = null;
+        OpenWeatherCall call = new OpenWeatherCall();
 
         LocalDate selectedDate = LocalDate
                 .parse((String) cbDate.getSelectedItem(),
                         DTF.STANDARD_DATE.value());
 
         if (selectedDate.equals(LocalDate.now())) {
-            weather = OpenWeatherCall
-                    .getInstance().getCurrentWeatherByCityAndCountry(city, country);
+            weather = call.getCurrentWeatherByCityAndCountry(city, country);
         } else {
-            WeatherForecast forecast = OpenWeatherCall.getInstance().getForecastByCityAndCountry(city, country);
+            WeatherForecast forecast = call.getForecastByCityAndCountry(city, country);
             weather = new ForecastParser().parseForecastToCurrentWeather(forecast, selectedDate);
         }
 
@@ -250,6 +269,8 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
         tbDestination.setDefaultRenderer(Object.class, renderer);
         tbDestination.setRowHeight(30);
     }
+    
+    
 
     /**
      * @param args the command line arguments
@@ -294,13 +315,13 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAddDestination;
+    private javax.swing.JButton btCompareDestinations;
     private javax.swing.JButton btRemoveDestination;
     private javax.swing.JComboBox<String> cbCountry;
     private javax.swing.JComboBox<String> cbDate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;

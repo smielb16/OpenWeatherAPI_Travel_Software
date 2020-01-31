@@ -8,4 +8,16 @@
     <name>Astana</name>
     <country>KZ</country>
   </destination>
+  <destination>
+    <name>Graz</name>
+    <country>AT</country>
+  </destination>
+  <destination>
+    <name>Jerusalem</name>
+    <country>IL</country>
+  </destination>
+  <destination>
+    <name>Phoenix</name>
+    <country>US</country>
+  </destination>
 </destinations>
