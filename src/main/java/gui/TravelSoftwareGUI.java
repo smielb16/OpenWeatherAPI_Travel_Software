@@ -14,8 +14,11 @@ import bl.ForecastParser;
 import bl.TravelSoftwareTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import javax.swing.table.JTableHeader;
 
 /**
  *
@@ -31,23 +34,7 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
      */
     public TravelSoftwareGUI() {
         initComponents();
-
-        model = new TravelSoftwareTableModel();
-        renderer = new TravelSoftwareTableCellRenderer();
-
-        cbDate.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                changeForecastModel();
-            }
-        });
-
-        fillDateCb();
-        fillCountryCb();
-
-        model.load();
-        tbDestination.setModel(model);
-        tbDestination.setDefaultRenderer(Object.class, renderer);
-        tbDestination.setRowHeight(30);
+        init();
     }
 
     /**
@@ -232,6 +219,36 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
         }
 
         model.add(weather);
+    }
+
+    private void init() {
+        model = new TravelSoftwareTableModel();
+        renderer = new TravelSoftwareTableCellRenderer();
+
+        cbDate.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                changeForecastModel();
+            }
+        });
+
+        JTableHeader header = tbDestination.getTableHeader();
+        header.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent event) {
+                if (event.getButton() == MouseEvent.BUTTON1) {
+                    int colid = tbDestination.columnAtPoint(event.getPoint());
+                    model.sortColumn("" + header.getColumnModel()
+                            .getColumn(colid).getHeaderValue());
+                }
+            }
+        });
+
+        fillDateCb();
+        fillCountryCb();
+
+        model.load();
+        tbDestination.setModel(model);
+        tbDestination.setDefaultRenderer(Object.class, renderer);
+        tbDestination.setRowHeight(30);
     }
 
     /**

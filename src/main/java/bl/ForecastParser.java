@@ -11,9 +11,7 @@ import api_forecast.City;
 import api_forecast.ForecastElement;
 import api_forecast.WeatherForecast;
 import com.google.gson.Gson;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 

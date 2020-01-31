@@ -13,6 +13,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
 import org.jdom2.JDOMException;
+import sort.SortByDestination;
+import sort.SortByHumidity;
+import sort.SortByMaxTemp;
+import sort.SortByMinTemp;
+import sort.SortByPressure;
+import sort.SortByTemp;
 
 /**
  *
@@ -83,13 +89,38 @@ public class TravelSoftwareTableModel extends AbstractTableModel {
             Logger.getLogger(TravelSoftwareTableModel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public ArrayList<CurrentWeather> getWeatherData(){
+
+    public ArrayList<CurrentWeather> getWeatherData() {
         return data;
     }
-    
-    public void clearTable(){
+
+    public void clearTable() {
         data.clear();
+        fireTableDataChanged();
+    }
+
+    public void sortColumn(String column) {
+        switch (column) {
+            case "Destination":
+                data.sort(new SortByDestination());
+                break;
+            case "Temp":
+                data.sort(new SortByTemp());
+                break;
+            case "Min Temp":
+                data.sort(new SortByMinTemp());
+                break;
+            case "Max Temp":
+                data.sort(new SortByMaxTemp());
+                break;
+            case "Humidity":
+                data.sort(new SortByHumidity());
+                break;
+            case "Pressure":
+                data.sort(new SortByPressure());
+                break;
+        }
+
         fireTableDataChanged();
     }
 
