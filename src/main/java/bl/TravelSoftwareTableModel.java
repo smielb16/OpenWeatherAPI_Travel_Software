@@ -27,18 +27,26 @@ import sort.SortByTemp;
  */
 public class TravelSoftwareTableModel extends AbstractTableModel {
 
-    private ArrayList<CurrentWeather> data = new ArrayList<>();
+    private ArrayList<CurrentWeather> entries = new ArrayList<>();
     private String[] COLUMNS = {"Icon", "Destination", "Temp", "Min Temp", "Max Temp", "Humidity", "Pressure"};
 
+    /**
+     * adds weather entry to list and table
+     * @param weather 
+     */
     public void add(CurrentWeather weather) {
-        data.add(weather);
+        entries.add(weather);
         save();
-        fireTableRowsInserted(data.size() - 1, data.size() - 1);
+        fireTableRowsInserted(entries.size() - 1, entries.size() - 1);
     }
 
+    /**
+     * removes weather entry from list and table
+     * @param indices 
+     */
     public void remove(int[] indices) {
         for (int i = indices.length - 1; i >= 0; i--) {
-            data.remove(indices[i]);
+            entries.remove(indices[i]);
             save();
             fireTableRowsDeleted(indices[i], indices[i]);
         }
@@ -46,7 +54,7 @@ public class TravelSoftwareTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return data.size();
+        return entries.size();
     }
 
     @Override
@@ -56,7 +64,7 @@ public class TravelSoftwareTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return data.get(rowIndex);
+        return entries.get(rowIndex);
     }
 
     @Override
@@ -64,9 +72,12 @@ public class TravelSoftwareTableModel extends AbstractTableModel {
         return COLUMNS[column];
     }
 
+    /**
+     * passes weather entry list in order for it to be saved to XML
+     */
     private void save() {
         try {
-            DestinationXML.getInstance().saveDestinations(data);
+            DestinationXML.getInstance().saveDestinations(entries);
         } catch (JDOMException ex) {
             Logger.getLogger(TravelSoftwareTableModel.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -74,6 +85,9 @@ public class TravelSoftwareTableModel extends AbstractTableModel {
         }
     }
 
+    /**
+     * loads destination names and retrieves current weather data for respective destination
+     */
     public void load() {
         try {
             ArrayList<String> destinations = DestinationXML.getInstance().loadDestinations();
@@ -81,8 +95,8 @@ public class TravelSoftwareTableModel extends AbstractTableModel {
                 String[] parts = destination.split(",");
                 String city = parts[0];
                 String country = parts[1];
-                data.add(new OpenWeatherCall().getCurrentWeatherByCityAndCountry(city, country));
-                fireTableRowsInserted(data.size() - 1, data.size() - 1);
+                entries.add(new OpenWeatherCall().getCurrentWeatherByCityAndCountry(city, country));
+                fireTableRowsInserted(entries.size() - 1, entries.size() - 1);
             }
         } catch (JDOMException ex) {
             Logger.getLogger(TravelSoftwareTableModel.class.getName()).log(Level.SEVERE, null, ex);
@@ -92,33 +106,33 @@ public class TravelSoftwareTableModel extends AbstractTableModel {
     }
 
     public ArrayList<CurrentWeather> getWeatherData() {
-        return data;
+        return entries;
     }
 
     public void clearTable() {
-        data.clear();
+        entries.clear();
         fireTableDataChanged();
     }
 
     public void sortColumn(String column) {
         switch (column) {
             case "Destination":
-                data.sort(new SortByDestination());
+                entries.sort(new SortByDestination());
                 break;
             case "Temp":
-                data.sort(new SortByTemp());
+                entries.sort(new SortByTemp());
                 break;
             case "Min Temp":
-                data.sort(new SortByMinTemp());
+                entries.sort(new SortByMinTemp());
                 break;
             case "Max Temp":
-                data.sort(new SortByMaxTemp());
+                entries.sort(new SortByMaxTemp());
                 break;
             case "Humidity":
-                data.sort(new SortByHumidity());
+                entries.sort(new SortByHumidity());
                 break;
             case "Pressure":
-                data.sort(new SortByPressure());
+                entries.sort(new SortByPressure());
                 break;
         }
 
@@ -131,8 +145,8 @@ public class TravelSoftwareTableModel extends AbstractTableModel {
         }
         
         CurrentWeather[] conditions = new CurrentWeather[2];
-        conditions[0] = data.get(indices[0]);
-        conditions[1] = data.get(indices[1]);
+        conditions[0] = entries.get(indices[0]);
+        conditions[1] = entries.get(indices[1]);
         
         new CompareWeatherConditionsGUI().showConditions(conditions);
     }

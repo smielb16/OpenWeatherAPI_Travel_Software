@@ -38,6 +38,12 @@ public class OpenWeatherCall {
         
     }
 
+    /**
+     * retrieves current weather for specified location
+     * @param city
+     * @param countrycode
+     * @return 
+     */
     public CurrentWeather getCurrentWeatherByCityAndCountry(String city, String countrycode) {
         Client c = ClientBuilder.newClient();
         Response r = c.target(URI)
@@ -55,6 +61,11 @@ public class OpenWeatherCall {
         return response;
     }
 
+    /**
+     * returns image of weather icon for given icon id
+     * @param id
+     * @return 
+     */
     public Image getWeatherIcon(String id) {
         Image image = null;
         try {
@@ -68,6 +79,12 @@ public class OpenWeatherCall {
         return image;
     }
 
+    /**
+     * returns 5-day weather forecast for given location
+     * @param city
+     * @param countrycode
+     * @return 
+     */
     public WeatherForecast getForecastByCityAndCountry(String city, String countrycode) {
         Client c = ClientBuilder.newClient();
         Response r = c.target(URI)

@@ -21,6 +21,12 @@ import java.util.ArrayList;
  */
 public class ForecastParser {
 
+    /**
+     * returns CurrentWeather-object for easy implementation in table model
+     * @param forecast
+     * @param date
+     * @return 
+     */
     public CurrentWeather parseForecastToCurrentWeather(WeatherForecast forecast, LocalDate date) {
         ArrayList<ForecastElement> list = forecast.getList();
         Gson gson = new Gson();
@@ -38,6 +44,12 @@ public class ForecastParser {
         return weather;
     }
 
+    /**
+     * parses the forecast values into a CurrentWeather-object
+     * @param elem
+     * @param city
+     * @return 
+     */
     private CurrentWeather convertForecast(ForecastElement elem, City city) {
         CurrentWeather weather = new CurrentWeather();
         weather.setMain(elem.getMain());

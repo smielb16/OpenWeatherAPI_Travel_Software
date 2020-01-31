@@ -176,7 +176,7 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
         String country = CountryCodes.getInstance()
                 .getValue((String) cbCountry.getSelectedItem());
 
-        addData(city, country);
+        addDestination(city, country);
     }//GEN-LAST:event_btAddDestinationActionPerformed
 
     private void btRemoveDestinationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveDestinationActionPerformed
@@ -196,6 +196,9 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btCompareDestinationsActionPerformed
 
+    /**
+     * fills the data combo box
+     */
     private void fillDateCb() {
         LocalDate date = LocalDate.now();
 
@@ -205,24 +208,35 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * fills the country code combobox
+     */
     private void fillCountryCb() {
         for (String key : CountryCodes.getInstance().getCountries()) {
             cbCountry.addItem(key);
         }
     }
 
+    /**
+     * updates weather entries in table with entries representing the chosen date of forecast
+     */
     private void changeForecastModel() {
         ArrayList<CurrentWeather> data = new ArrayList<>();
         data.addAll(model.getWeatherData());
         model.clearTable();
 
         for (CurrentWeather currentWeather : data) {
-            addData(currentWeather.getName(),
+            addDestination(currentWeather.getName(),
                     currentWeather.getSys().getCountry());
         }
     }
 
-    private void addData(String city, String country) {
+    /**
+     * adds entry to table
+     * @param city
+     * @param country 
+     */
+    private void addDestination(String city, String country) {
         CurrentWeather weather = null;
         OpenWeatherCall call = new OpenWeatherCall();
 
@@ -240,6 +254,9 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
         model.add(weather);
     }
 
+    /**
+     * initializes listeners and sets custom table cell renderer and model
+     */
     private void init() {
         model = new TravelSoftwareTableModel();
         renderer = new TravelSoftwareTableCellRenderer();
@@ -269,7 +286,6 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
         tbDestination.setDefaultRenderer(Object.class, renderer);
         tbDestination.setRowHeight(30);
     }
-    
     
 
     /**

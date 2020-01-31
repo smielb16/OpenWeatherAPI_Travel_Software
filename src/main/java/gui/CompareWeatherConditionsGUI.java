@@ -22,11 +22,14 @@ public class CompareWeatherConditionsGUI extends javax.swing.JFrame {
      */
     public CompareWeatherConditionsGUI() {
         initComponents();
-        setVisible(true);
         setSize(600, 400);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
+    /**
+     * prepares the GUI
+     * @param conditions 
+     */
     public void showConditions(CurrentWeather[] conditions) {
         OpenWeatherCall call = new OpenWeatherCall();
         ImageIconScalar scalar = new ImageIconScalar();
@@ -60,6 +63,8 @@ public class CompareWeatherConditionsGUI extends javax.swing.JFrame {
 
         lbHumidity1.setText(weather1.getMain().getHumidity() + " %");
         lbHumidity2.setText(weather2.getMain().getHumidity() + " %");
+        
+        setVisible(true);
     }
 
     /**

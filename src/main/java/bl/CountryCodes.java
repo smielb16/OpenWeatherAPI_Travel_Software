@@ -36,6 +36,9 @@ public class CountryCodes {
         return instance;
     }
     
+    /**
+     * loads all countries into map
+     */
     public void loadCountries() {
         try {
             BufferedReader bf = new BufferedReader(new FileReader(new File(countrycodepath)));
@@ -51,6 +54,11 @@ public class CountryCodes {
         }
     }
     
+    /**
+     * returns value from both maps for given key
+     * @param key
+     * @return 
+     */
     public String getValue(String key){
         if(codemap.containsKey(key)){
             return codemap.get(key);
@@ -58,6 +66,10 @@ public class CountryCodes {
         return countrymap.get(key);
     }
     
+    /**
+     * returns all countries
+     * @return 
+     */
     public Set<String> getCountries(){
         return countrymap.keySet();
     }

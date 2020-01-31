@@ -17,6 +17,13 @@ import javax.swing.ImageIcon;
  */
 public class ImageIconScalar {
 
+    /**
+     * returns scaled image with specified width and height
+     * @param srcImg
+     * @param w
+     * @param h
+     * @return 
+     */
     public ImageIcon getScaledImageIcon(Image srcImg, int w, int h) {
         BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = resizedImg.createGraphics();

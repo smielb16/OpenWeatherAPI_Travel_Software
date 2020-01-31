@@ -49,6 +49,10 @@ public class DestinationXML {
         return instance;
     }
 
+    /**
+     * saves given destination names to XML
+     * @param data 
+     */
     public void saveDestinations(ArrayList<CurrentWeather> data) {
         ArrayList<String> destinations = new ArrayList<>();
         for (CurrentWeather weather : data) {
@@ -80,6 +84,10 @@ public class DestinationXML {
         }
     }
 
+    /**
+     * loads saved destination names from XML
+     * @return 
+     */
     public ArrayList<String> loadDestinations() {
         Element root = doc.getRootElement();
         ArrayList<String> destinations = new ArrayList<>();
