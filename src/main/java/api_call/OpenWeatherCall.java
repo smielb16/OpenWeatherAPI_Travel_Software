@@ -9,6 +9,7 @@ import api_current_weather.CurrentWeather;
 import api_forecast.WeatherForecast;
 import com.google.gson.Gson;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -62,12 +63,12 @@ public class OpenWeatherCall {
     }
 
     /**
-     * returns image of weather icon for given icon id
+     * returns image (buffered due to testing requirements) of weather icon for given icon id
      * @param id
      * @return 
      */
-    public Image getWeatherIcon(String id) {
-        Image image = null;
+    public BufferedImage getWeatherIcon(String id) {
+        BufferedImage image = null;
         try {
             URL url = new URL(URI_ICON + id + ICON_END);
             image = ImageIO.read(url);
