@@ -8,7 +8,6 @@ package api_call;
 import api_current_weather.CurrentWeather;
 import api_forecast.WeatherForecast;
 import com.google.gson.Gson;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
