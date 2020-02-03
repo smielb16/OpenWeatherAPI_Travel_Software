@@ -6,13 +6,11 @@
 package api_call;
 
 import api_current_weather.CurrentWeather;
+import api_current_weather.Sys;
+import api_forecast.City;
 import api_forecast.WeatherForecast;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.io.IOException;
-import java.net.URL;
-import javax.imageio.ImageIO;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static org.junit.jupiter.api.Assertions.*;
 /**
  *
@@ -49,9 +47,17 @@ public class OpenWeatherCallTest {
         String countrycode = "AT";
         OpenWeatherCall instance = new OpenWeatherCall();
         
-        CurrentWeather result = instance.getCurrentWeatherByCityAndCountry(city, countrycode);
+        CurrentWeather result = new CurrentWeather();
+        Sys sysRes = new Sys();
+        sysRes.setCountry("Error");
+        result.setSys(sysRes);
+        try {
+            result = instance.getCurrentWeatherByCityAndCountry(city, countrycode);
+        } catch (DestinationNotFoundException ex) {
+            Logger.getLogger(OpenWeatherCallTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
-        assertEquals(city, result.getName());
+        assertEquals(countrycode, result.getSys().getCountry());
     }
 
     /**
@@ -84,9 +90,17 @@ public class OpenWeatherCallTest {
         String countrycode = "AT";
         OpenWeatherCall instance = new OpenWeatherCall();
         
-        WeatherForecast result = instance.getForecastByCityAndCountry(city, countrycode);
+        WeatherForecast result = new WeatherForecast();
+        City cityRes = new City();
+        cityRes.setCountry("Error");
+        result.setCity(cityRes);
+        try {
+            result = instance.getForecastByCityAndCountry(city, countrycode);
+        } catch (Exception ex) {
+            Logger.getLogger(OpenWeatherCallTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
-        assertEquals(city, result.getCity().getName());
+        assertEquals(countrycode, result.getCity().getCountry());
     }
     
 }

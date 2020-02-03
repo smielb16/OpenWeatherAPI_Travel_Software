@@ -10,9 +10,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sort.SortCountries;
 
 /**
  *
@@ -24,18 +25,18 @@ public class CountryCodes {
     private HashMap<String, String> codemap = new HashMap<>();
     private HashMap<String, String> countrymap = new HashMap<>();
     private static CountryCodes instance;
-    
-    private CountryCodes(){
+
+    private CountryCodes() {
         loadCountries();
     }
-    
-    public static synchronized CountryCodes getInstance(){
-        if(instance == null){
+
+    public static synchronized CountryCodes getInstance() {
+        if (instance == null) {
             instance = new CountryCodes();
         }
         return instance;
     }
-    
+
     /**
      * loads all countries into map
      */
@@ -43,7 +44,7 @@ public class CountryCodes {
         try {
             BufferedReader bf = new BufferedReader(new FileReader(new File(countrycodepath)));
             String line;
-            
+
             while ((line = bf.readLine()) != null) {
                 String[] parts = line.split(",");
                 countrymap.put(parts[0], parts[1]);
@@ -53,25 +54,35 @@ public class CountryCodes {
             Logger.getLogger(CountryCodes.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
      * returns value from both maps for given key
+     *
      * @param key
-     * @return 
+     * @return
      */
-    public String getValue(String key){
-        if(codemap.containsKey(key)){
+    public String getValue(String key) {
+        if (codemap.containsKey(key)) {
             return codemap.get(key);
         }
         return countrymap.get(key);
     }
-    
+
     /**
      * returns all countries
-     * @return 
+     *
+     * @return
      */
-    public Set<String> getCountries(){
-        return countrymap.keySet();
+    public LinkedList<String> getCountries() {
+        LinkedList<String> countrylist = new LinkedList<>();
+        
+        for (String country : countrymap.keySet()) {
+            countrylist.add(country);
+        }
+        
+        countrylist.sort(new SortCountries());
+        
+        return countrylist;
     }
 
 }

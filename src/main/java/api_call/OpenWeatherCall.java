@@ -35,36 +35,46 @@ public class OpenWeatherCall {
     private static String ICON_END = "@2x.png";
 
     public OpenWeatherCall() {
-        
+
     }
 
     /**
      * retrieves current weather for specified location
+     *
      * @param city
      * @param countrycode
-     * @return 
+     * @return
      */
-    public CurrentWeather getCurrentWeatherByCityAndCountry(String city, String countrycode) {
+    public CurrentWeather getCurrentWeatherByCityAndCountry(String city, String countrycode) throws DestinationNotFoundException {
+        String param = city.replaceAll(" ", "%20") + "," + countrycode;
+
         Client c = ClientBuilder.newClient();
         Response r = c.target(URI)
                 .path(PATH_1)
                 .queryParam("appid", APPID)
                 .queryParam("units", UNITS)
-                .queryParam("q", city + "," + countrycode)
+                .queryParam("q", param)
                 .request(MediaType.APPLICATION_JSON)
                 .get();
 
-        String jsonString = r.readEntity(String.class);
+        String responseStr = r.readEntity(String.class);
+
+        if (responseStr.contains("\"cod\":\"404\"")) {
+            throw new DestinationNotFoundException("Weather data for destination \"" + city + "\" could not be found!");
+        }
+
         Gson gson = new Gson();
-        CurrentWeather response = gson.fromJson(jsonString, CurrentWeather.class);
+        CurrentWeather response = gson.fromJson(responseStr, CurrentWeather.class);
 
         return response;
     }
 
     /**
-     * returns image (buffered due to testing requirements) of weather icon for given icon id
+     * returns image (buffered due to testing requirements) of weather icon for
+     * given icon id
+     *
      * @param id
-     * @return 
+     * @return
      */
     public BufferedImage getWeatherIcon(String id) {
         BufferedImage image = null;
@@ -81,23 +91,31 @@ public class OpenWeatherCall {
 
     /**
      * returns 5-day weather forecast for given location
+     *
      * @param city
      * @param countrycode
-     * @return 
+     * @return
      */
-    public WeatherForecast getForecastByCityAndCountry(String city, String countrycode) {
+    public WeatherForecast getForecastByCityAndCountry(String city, String countrycode) throws DestinationNotFoundException {
+        String param = city.replaceAll(" ", "%20") + "," + countrycode;
+
         Client c = ClientBuilder.newClient();
         Response r = c.target(URI)
                 .path(PATH_2)
                 .queryParam("appid", APPID)
-                .queryParam(UNITS)
-                .queryParam("q", city)
+                .queryParam("units", UNITS)
+                .queryParam("q", param)
                 .request(MediaType.APPLICATION_JSON)
                 .get();
 
-        String jsonString = r.readEntity(String.class);
+        String responseStr = r.readEntity(String.class);
+
+        if (responseStr.contains("\"cod\":\"404\"")) {
+            throw new DestinationNotFoundException("Weather data for destination \"" + city + "\" could not be found!");
+        }
+
         Gson gson = new Gson();
-        WeatherForecast response = gson.fromJson(jsonString, WeatherForecast.class);
+        WeatherForecast response = gson.fromJson(responseStr, WeatherForecast.class);
 
         return response;
     }

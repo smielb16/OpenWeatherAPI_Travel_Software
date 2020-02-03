@@ -5,6 +5,7 @@
  */
 package bl;
 
+import api_call.DestinationNotFoundException;
 import api_call.OpenWeatherCall;
 import api_current_weather.CurrentWeather;
 import gui.CompareWeatherConditionsGUI;
@@ -88,7 +89,7 @@ public class TravelSoftwareTableModel extends AbstractTableModel {
     /**
      * loads destination names and retrieves current weather data for respective destination
      */
-    public void load() {
+    public void load() throws DestinationNotFoundException {
         try {
             ArrayList<String> destinations = DestinationXML.getInstance().loadDestinations();
             for (String destination : destinations) {

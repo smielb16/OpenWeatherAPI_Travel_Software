@@ -13,11 +13,15 @@
     <country>AT</country>
   </destination>
   <destination>
-    <name>Jerusalem</name>
-    <country>IL</country>
-  </destination>
-  <destination>
     <name>Phoenix</name>
     <country>US</country>
+  </destination>
+  <destination>
+    <name>Bad Hofgastein</name>
+    <country>AT</country>
+  </destination>
+  <destination>
+    <name>Lieboch</name>
+    <country>AT</country>
   </destination>
 </destinations>

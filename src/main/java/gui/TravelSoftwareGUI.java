@@ -5,6 +5,7 @@
  */
 package gui;
 
+import api_call.DestinationNotFoundException;
 import api_call.OpenWeatherCall;
 import api_current_weather.CurrentWeather;
 import api_forecast.WeatherForecast;
@@ -212,13 +213,14 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
      * fills the country code combobox
      */
     private void fillCountryCb() {
-        for (String key : CountryCodes.getInstance().getCountries()) {
-            cbCountry.addItem(key);
+        for (String country : CountryCodes.getInstance().getCountries()) {
+            cbCountry.addItem(country);
         }
     }
 
     /**
-     * updates weather entries in table with entries representing the chosen date of forecast
+     * updates weather entries in table with entries representing the chosen
+     * date of forecast
      */
     private void changeForecastModel() {
         ArrayList<CurrentWeather> data = new ArrayList<>();
@@ -233,25 +235,30 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
 
     /**
      * adds entry to table
+     *
      * @param city
-     * @param country 
+     * @param country
      */
     private void addDestination(String city, String country) {
-        CurrentWeather weather = null;
-        OpenWeatherCall call = new OpenWeatherCall();
+        try {
+            CurrentWeather weather = null;
+            OpenWeatherCall call = new OpenWeatherCall();
 
-        LocalDate selectedDate = LocalDate
-                .parse((String) cbDate.getSelectedItem(),
-                        DTF.STANDARD_DATE.value());
+            LocalDate selectedDate = LocalDate
+                    .parse((String) cbDate.getSelectedItem(),
+                            DTF.STANDARD_DATE.value());
 
-        if (selectedDate.equals(LocalDate.now())) {
-            weather = call.getCurrentWeatherByCityAndCountry(city, country);
-        } else {
-            WeatherForecast forecast = call.getForecastByCityAndCountry(city, country);
-            weather = new ForecastParser().parseForecastToCurrentWeather(forecast, selectedDate);
+            if (selectedDate.equals(LocalDate.now())) {
+                weather = call.getCurrentWeatherByCityAndCountry(city, country);
+            } else {
+                WeatherForecast forecast = call.getForecastByCityAndCountry(city, country);
+                weather = new ForecastParser().parseForecastToCurrentWeather(forecast, selectedDate);
+            }
+
+            model.add(weather);
+        } catch (DestinationNotFoundException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-
-        model.add(weather);
     }
 
     /**
@@ -281,12 +288,17 @@ public class TravelSoftwareGUI extends javax.swing.JFrame {
         fillDateCb();
         fillCountryCb();
 
-        model.load();
+        try {
+            model.load();
+        } catch (DestinationNotFoundException ex) {
+            Logger.getLogger(TravelSoftwareGUI.class.getName()).log(Level.SEVERE, null, ex);
+            String msg = "Some saved destinations may not have been loaded in!";
+            JOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);
+        }
         tbDestination.setModel(model);
         tbDestination.setDefaultRenderer(Object.class, renderer);
         tbDestination.setRowHeight(30);
     }
-    
 
     /**
      * @param args the command line arguments
